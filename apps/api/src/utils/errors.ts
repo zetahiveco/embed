@@ -1,0 +1,1 @@
+export const APPLICATION_ERROR = "some application error has happened";

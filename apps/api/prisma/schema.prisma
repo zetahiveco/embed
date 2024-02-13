@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IntegrationType {
+  BIG_QUERY
+  SQL_SERVER
+  MYSQL
+  TIMESCALE
+  SUPABASE
+  CUBE
+  CRATE_DB
+  COCKROACH_DB
+  SINGLE_STORE
+  MATERIALIZE
+  POSTGRESQL
+  AWS_REDSHIT
+  SNOWFLAKE
+  ROCKSET
+  CLICKHOUSE
+}
+
+enum ChartType {
+  BAR_CHART
+  LINE_CHART
+  TABLE_VIEW
+  PIE_CHART
+}
+
+enum UserRoleType {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  role       UserRoleType
+  password   String
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model UserInvite {
+  id        String       @id @default(uuid())
+  email     String       @unique
+  otp       String
+  role      UserRoleType
+  expiresAt DateTime
+}
+
+model DataSource {
+  id                    String          @id @default(uuid())
+  name                  String
+  integration_mechanism IntegrationType
+  host                  String
+  port                  Int
+  database              String
+  username              String
+  password              String
+  created_at            DateTime        @default(now())
+  updated_at            DateTime        @updatedAt
+  visualizations        Visualization[]
+}
+
+model Visualization {
+  id            String     @id @default(uuid())
+  name          String
+  chart_type    ChartType
+  datasource_id String
+  datasource    DataSource @relation(references: [id], fields: [datasource_id])
+  plain_sql     String
+}
+
+model Secret {
+  id      String @id @default(uuid())
+  name    String
+  api_key String @unique
+}
