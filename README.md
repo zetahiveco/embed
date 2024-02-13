@@ -18,4 +18,8 @@ Embed is an alternative to expensive clunky embedded analytics software.
 
 ## Contribute to the project
 
-If you are interested in contributing, please join us on our [slack channel](https://slack.getembed.dev/), open an [issue](https://github.com/zetahiveco/embed/issues/new), or contribute a pull request.****
+If you are interested in contributing, please join us on our [slack channel](https://slack.getembed.dev/), open an [issue](https://github.com/zetahiveco/embed/issues/new), or contribute a pull request.
+
+---
+
+This repository is part of Zetahive Technologies Pvt. Ltd
