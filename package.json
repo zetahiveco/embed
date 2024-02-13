@@ -1,0 +1,24 @@
+{
+  "name": "embed",
+  "description": "The open-source customer-facing embedded analytics and reports",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "visualization",
+    "embedded analytics",
+    "analytics",
+    "embedded reporting"
+  ],
+  "packageManager": "pnpm@8.15.1",
+  "author": "Zetahive Technologies Pvt. Ltd",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0"
+  }
+}
