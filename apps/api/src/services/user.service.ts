@@ -1,11 +1,12 @@
-import { PrismaClient, UserRoleType } from "@prisma/client";
+import { MemberRoleType } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "./email.service";
 import { generateOTP } from "../utils/otp";
+import Database from "../storage/db";
 
-export async function sendEmailInvite(email: string, role: UserRoleType) {
-    const prisma = new PrismaClient();
+export async function sendEmailInvite(email: string, organizationId: string, role: string) {
+    const prisma = Database.getInstance();
 
     const user = await prisma.user.findFirst({
         where: {
@@ -40,7 +41,8 @@ export async function sendEmailInvite(email: string, role: UserRoleType) {
                 email: email,
                 otp: otp,
                 expiresAt: newExpiryDate,
-                role: role
+                organization_id: organizationId,
+                role: role as MemberRoleType
             }
         })
     } else {
@@ -49,7 +51,8 @@ export async function sendEmailInvite(email: string, role: UserRoleType) {
                 email: email,
                 otp: otp,
                 expiresAt: newExpiryDate,
-                role: role
+                organization_id: organizationId,
+                role: role as MemberRoleType
             }
         })
     }
@@ -65,7 +68,7 @@ export async function sendEmailInvite(email: string, role: UserRoleType) {
 
 
 export async function verifyUserInvite(email: string, otp: string) {
-    const prisma = new PrismaClient();
+    const prisma = Database.getInstance();
     const userInvite = await prisma.userInvite.findFirst({
         where: {
             email: email
@@ -78,30 +81,74 @@ export async function verifyUserInvite(email: string, otp: string) {
                 email: email
             }
         })
-        return { status: true, role: userInvite.role };
+        return { status: true, role: userInvite.role, organizationId: userInvite.organization_id };
     }
 
-    return { status: false, role: null };
+    return { status: false, role: null, organizationId: "" };
 }
 
-export async function createUser(name: string, email: string, role: UserRoleType, password: string) {
-    const prisma = new PrismaClient();
+
+export async function checkIfUserExists(email: string) {
+    const prisma = Database.getInstance();
+    const user = await prisma.user.findFirst({
+        where: {
+            email: email
+        }
+    })
+    if(user) {
+        return user.id.toString();
+    }
+    return null;
+}
+
+
+export async function createUser(name: string, email: string, password: string, role: string, company: string = "", organizationId: string = "") {
+
+    if (!company && !organizationId) {
+        throw new Error(`either the company name or organization must be provided`)
+    }
+
+    const prisma = Database.getInstance();
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.create({
-        data: {
-            name: name,
-            email: email,
-            role: role,
-            password: hashedPassword
-        }
-    });
+    let userId = await checkIfUserExists(email);
 
-    return;
+    return await prisma.$transaction(async (trx) => {
+
+        if (!userId) {
+            const user = await trx.user.create({
+                data: {
+                    name: name,
+                    email: email,
+                    password: hashedPassword
+                }
+            });
+            userId = user.id;
+        }
+
+        if (!organizationId) {
+            const organization = await trx.organization.create({
+                data: {
+                    name: company
+                }
+            })
+
+            organizationId = organization.id;
+        }
+
+        await trx.member.create({
+            data: {
+                organization_id: organizationId,
+                user_id: userId,
+                role: role as MemberRoleType
+            }
+        })
+    })
+
 }
 
 export async function generateAccessTokens(email: string, password: string) {
-    const prisma = new PrismaClient();
+    const prisma = Database.getInstance();
     const user = await prisma.user.findFirst({
         where: {
             email: email
@@ -165,12 +212,63 @@ export function refreshAccessToken(refreshToken: string) {
     return accessToken;
 }
 
-export async function deleteUser(userId: string) {
-    const prisma = new PrismaClient();
-    await prisma.user.delete({
+
+export async function fetchOrganizations(userId: string) {
+    const prisma = Database.getInstance();
+    return await prisma.member.findMany({
         where: {
-            id: userId
+            user_id: userId
+        },
+        include: {
+            organization: {
+                select: {
+                    name: true
+                }
+            }
         }
-    });
-    return;
+    })
 }
+
+export async function fetchMembers(organizationId: string) {
+    const prisma = Database.getInstance();
+    return await prisma.member.findMany({
+        where: {
+            organization_id: organizationId
+        },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    email: true
+                }
+            }
+        }
+    })
+}
+
+
+export async function fetchUserInvites(organizationId: string) {
+    const prisma = Database.getInstance();
+    return await prisma.userInvite.findMany({
+        where: {
+            organization_id: organizationId
+        },
+        select: {
+            email: true,
+            role: true,
+            expiresAt: true
+        }
+    })
+}
+
+export async function deleteUserInvite(inviteId: string, organizationId: string) {
+    const prisma = Database.getInstance();
+
+    return await prisma.userInvite.delete({
+        where: {
+            id: inviteId,
+            organization_id: organizationId
+        }
+    })
+}
+

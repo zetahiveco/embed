@@ -1,5 +1,6 @@
 import express from "express";
 import useRouter from "./router";
+import Database from "./storage/db";
 
 
 async function start() {
@@ -16,4 +17,8 @@ async function start() {
 
 }
 
-start().catch((err) => console.log(err))
+start().catch((err) => console.log(err));
+
+process.on("exit", async () => {
+    await Database.destroyActiveConnections();
+})

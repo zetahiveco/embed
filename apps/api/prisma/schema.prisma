@@ -32,27 +32,62 @@ enum ChartType {
   PIE_CHART
 }
 
-enum UserRoleType {
+enum MemberRoleType {
   ADMIN
   MEMBER
 }
 
 model User {
-  id         String       @id @default(uuid())
+  id         String   @id @default(uuid())
   name       String
-  email      String       @unique
-  role       UserRoleType
+  email      String   @unique
   password   String
-  created_at DateTime     @default(now())
-  updated_at DateTime     @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  members    Member[]
+}
+
+model Organization {
+  id             String          @id @default(uuid())
+  name           String
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  members        Member[]
+  userInvites    UserInvite[]
+  apps           Application[]
+  dataSources    DataSource[]
+  visualizations Visualization[]
+  apiKeys        ApiKey[]
+}
+
+model Member {
+  organization_id String
+  organization    Organization   @relation(references: [id], fields: [organization_id])
+  user_id         String
+  user            User           @relation(references: [id], fields: [user_id])
+  role            MemberRoleType
+
+  @@id([organization_id, user_id])
 }
 
 model UserInvite {
-  id        String       @id @default(uuid())
-  email     String       @unique
+  id        String   @id @default(uuid())
+  email     String   @unique
   otp       String
-  role      UserRoleType
   expiresAt DateTime
+
+  // Attributes of organization
+  role            MemberRoleType
+  organization_id String
+  organization    Organization   @relation(references: [id], fields: [organization_id])
+}
+
+model Application {
+  id              String       @id @default(uuid())
+  name            String
+  organization_id String
+  organization    Organization @relation(references: [id], fields: [organization_id])
+  created_at      DateTime
 }
 
 model DataSource {
@@ -67,19 +102,26 @@ model DataSource {
   created_at            DateTime        @default(now())
   updated_at            DateTime        @updatedAt
   visualizations        Visualization[]
+  organization_id       String
+  organization          Organization    @relation(references: [id], fields: [organization_id])
 }
 
 model Visualization {
-  id            String     @id @default(uuid())
-  name          String
-  chart_type    ChartType
-  datasource_id String
-  datasource    DataSource @relation(references: [id], fields: [datasource_id])
-  plain_sql     String
+  id              String       @id @default(uuid())
+  name            String
+  chart_type      ChartType
+  datasource_id   String
+  datasource      DataSource   @relation(references: [id], fields: [datasource_id])
+  plain_sql       String
+  organization_id String
+  organization    Organization @relation(references: [id], fields: [organization_id])
 }
 
-model Secret {
-  id      String @id @default(uuid())
-  name    String
-  api_key String @unique
+model ApiKey {
+  id              String       @id @default(uuid())
+  name            String
+  api_key         String       @unique
+  created_at      DateTime     @default(now())
+  organization_id String
+  organization    Organization @relation(references: [id], fields: [organization_id])
 }
