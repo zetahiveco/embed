@@ -2,7 +2,7 @@
 
 # The open-source customer-facing analytics and reports
 
-Note: This project is under active development and not ready for product usage
+Note: This project is under active development and not ready for production usage
 
 ### **Docs | Examples | Cloud | Slack**
 
