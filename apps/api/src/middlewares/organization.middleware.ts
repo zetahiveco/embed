@@ -18,8 +18,8 @@ export async function verifyMembership(req: Request, res: Response, next: NextFu
         if (!member) {
             throw new Error(`not part of organization`)
         }
-        res.locals.organization_id = req.headers["organization-id"];
-        res.locals.member_role = member.role;
+        res.locals.organization = req.headers["organization-id"];
+        res.locals.role = member.role;
         next();
     } catch (err) {
         res.status(403).json({ detail: `you're not part of this organization` });
@@ -28,7 +28,7 @@ export async function verifyMembership(req: Request, res: Response, next: NextFu
 }
 
 export function checkIfOrganizationAdmin(_: Request, res: Response, next: NextFunction) {
-    if (res.locals.member_role === "ADMIN") {
+    if (res.locals.role === "ADMIN") {
         next();
     }
     res.status(403).json({ detail: `you don't have sufficient permissions` });

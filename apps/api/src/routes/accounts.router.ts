@@ -136,7 +136,7 @@ router.get(
     verifyUserAuth,
     async (_, res) => {
         try {
-            const organizations = await fetchOrganizations(res.locals.user_id);
+            const organizations = await fetchOrganizations(res.locals.user);
             res.status(200).json(organizations);
             return;
         } catch (err) {

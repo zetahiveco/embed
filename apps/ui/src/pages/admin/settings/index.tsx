@@ -66,6 +66,4 @@ export default function Settings() {
         </AppBox>
     )
 
-
-
 }

@@ -13,7 +13,6 @@ export default function Visualization() {
                     <h1>Visualization</h1>
                 </Box>
             </Box>
-
         </AppBox>
     )
 }
