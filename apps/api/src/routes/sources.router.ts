@@ -32,7 +32,7 @@ router.post(
     validateRequest({
         body: z.object({
             name: z.string(),
-            integration_type: z.string(),
+            integrationType: z.string(),
             host: z.string(),
             port: z.string(),
             username: z.string(),
@@ -44,7 +44,7 @@ router.post(
         try {
             await createSource(
                 req.body.name,
-                req.body.integration_type,
+                req.body.integrationType,
                 req.body.database,
                 req.body.host,
                 req.body.port,

@@ -41,7 +41,7 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
                 email: email,
                 otp: otp,
                 expiresAt: newExpiryDate,
-                organization_id: organizationId,
+                organizationId: organizationId,
                 role: role as MemberRoleType
             }
         })
@@ -51,7 +51,7 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
                 email: email,
                 otp: otp,
                 expiresAt: newExpiryDate,
-                organization_id: organizationId,
+                organizationId: organizationId,
                 role: role as MemberRoleType
             }
         })
@@ -81,7 +81,7 @@ export async function verifyUserInvite(email: string, otp: string) {
                 email: email
             }
         })
-        return { status: true, role: userInvite.role, organizationId: userInvite.organization_id };
+        return { status: true, role: userInvite.role, organizationId: userInvite.organizationId };
     }
 
     return { status: false, role: null, organizationId: "" };
@@ -95,7 +95,7 @@ export async function checkIfUserExists(email: string) {
             email: email
         }
     })
-    if(user) {
+    if (user) {
         return user.id.toString();
     }
     return null;
@@ -138,8 +138,8 @@ export async function createUser(name: string, email: string, password: string, 
 
         await trx.member.create({
             data: {
-                organization_id: organizationId,
-                user_id: userId,
+                organizationId: organizationId,
+                userId: userId,
                 role: role as MemberRoleType
             }
         })
@@ -173,23 +173,20 @@ export async function generateAccessTokens(email: string, password: string) {
 
 
     const accessToken = jwt.sign({
-        user_id: user.id,
-        token_type: "access_token"
+        userId: user.id,
+        tokenType: "accessToken"
     }, process.env["SIGNING_SECRET"] as string, {
         expiresIn: accessTokenExpiry.getTime()
     });
 
     const refreshToken = jwt.sign({
-        user_id: user.id,
-        token_type: "refresh_token"
+        userId: user.id,
+        tokenType: "refreshToken"
     }, process.env["SIGNING_SECRET"] as string, {
         expiresIn: refreshTokenExpiry.getTime()
     });
 
-    return {
-        "access_token": accessToken,
-        "refresh_token": refreshToken
-    }
+    return { accessToken, refreshToken }
 
 }
 
@@ -203,8 +200,8 @@ export function refreshAccessToken(refreshToken: string) {
     accessTokenExpiry.setMinutes(accessTokenExpiry.getMinutes() + 30);
 
     const accessToken = jwt.sign({
-        user_id: refreshDecoded.user_id,
-        token_type: "access_token"
+        userId: refreshDecoded.userId,
+        tokenType: "accessToken"
     }, process.env["SIGNING_SECRET"] as string, {
         expiresIn: accessTokenExpiry.getTime()
     });
@@ -217,7 +214,7 @@ export async function fetchOrganizations(userId: string) {
     const prisma = Database.getInstance();
     return await prisma.member.findMany({
         where: {
-            user_id: userId
+            userId: userId
         },
         include: {
             organization: {
@@ -233,7 +230,7 @@ export async function fetchMembers(organizationId: string) {
     const prisma = Database.getInstance();
     return await prisma.member.findMany({
         where: {
-            organization_id: organizationId
+            organizationId: organizationId
         },
         include: {
             user: {
@@ -251,7 +248,7 @@ export async function fetchUserInvites(organizationId: string) {
     const prisma = Database.getInstance();
     return await prisma.userInvite.findMany({
         where: {
-            organization_id: organizationId
+            organizationId: organizationId
         },
         select: {
             email: true,
@@ -267,7 +264,7 @@ export async function deleteUserInvite(inviteId: string, organizationId: string)
     return await prisma.userInvite.delete({
         where: {
             id: inviteId,
-            organization_id: organizationId
+            organizationId: organizationId
         }
     })
 }

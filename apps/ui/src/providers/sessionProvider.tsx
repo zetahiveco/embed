@@ -27,8 +27,9 @@ export default function SessionProvider(props: any) {
 
     if (loading) {
         return <Loader />
-
     }
+
+    
 
     return <Box>{props.children}</Box>
 }

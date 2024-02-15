@@ -3,8 +3,8 @@ import { decodeJWT } from "./jwt";
 import axios from "axios";
 
 export async function getToken() {
-    let accessToken = Cookies.get("access_token");
-    let refreshToken = Cookies.get("refresh_token");
+    let accessToken = Cookies.get("accessToken");
+    let refreshToken = Cookies.get("refreshToken");
 
     if (!refreshToken) return null;
 
@@ -15,9 +15,9 @@ export async function getToken() {
             refresh: refreshToken
         });
 
-        let accessClaims = decodeJWT(res.data["access_token"]);
-        Cookies.set("access_token", res.data["access_token"], { expires: new Date(accessClaims.exp * 1000) });
-        accessToken = res.data["access_token"];
+        let accessClaims = decodeJWT(res.data["accessToken"]);
+        Cookies.set("accessToken", res.data["accessToken"], { expires: new Date(accessClaims.exp * 1000) });
+        accessToken = res.data["accessToken"];
 
     }
 

@@ -11,8 +11,8 @@ export async function verifyMembership(req: Request, res: Response, next: NextFu
         const prisma = Database.getInstance();
         const member = await prisma.member.findFirst({
             where: {
-                organization_id: req.headers["organization-id"] as string,
-                user_id: res.locals.user
+                organizationId: req.headers["organization-id"] as string,
+                userId: res.locals.user
             }
         })
         if (!member) {

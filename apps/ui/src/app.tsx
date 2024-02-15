@@ -31,7 +31,7 @@ function App() {
     const navigate = useNavigate();
 
     useEffect(() => {
-      if (!userId && !currentOrganization) {
+      if (!userId || !currentOrganization) {
         navigate("/admin/auth/login");
       } else {
         navigate("/admin/visualizations");

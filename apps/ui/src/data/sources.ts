@@ -4,7 +4,7 @@ import { create } from "zustand";
 
 export interface CreateSourceForm {
     name: string
-    integration_type: string
+    integrationType: string
     database: string
     host: string
     port: string

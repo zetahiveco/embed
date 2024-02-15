@@ -32,9 +32,9 @@ export default function NewSource(props: any) {
                     <Input {...register("name", { required: true })} placeholder="Enter a name" />
                     <FormErrorMessage>This field is required</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.integration_type ? true : false}>
+                <FormControl isInvalid={errors.integrationType ? true : false}>
                     <FormLabel>Datasource</FormLabel>
-                    <Select {...register("integration_type", { required: true })}>
+                    <Select {...register("integrationType", { required: true })}>
                         <option value="">Choose datasource</option>
                         <option value="POSTGRESQL">Postgres</option>
                         <option value="MYSQL">MySQL</option>

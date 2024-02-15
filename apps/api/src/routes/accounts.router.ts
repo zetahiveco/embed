@@ -121,7 +121,7 @@ router.post(
     (req, res) => {
         try {
             let accessToken = refreshAccessToken(req.body.refresh_token);
-            res.status(200).json({ access_token: accessToken });
+            res.status(200).json({ accessToken });
             return;
         } catch (err) {
             res.status(401).json({ detail: err });
@@ -129,7 +129,6 @@ router.post(
         }
     }
 )
-
 
 router.get(
     `/organizations`,
@@ -152,7 +151,7 @@ router.get(
     verifyUserAuth,
     (_, res) => {
         try {
-            res.status(200).json({ user_id: res.locals.user });
+            res.status(200).json({ userId: res.locals.user });
             return;
         } catch(err) {
             res.status(500).json(APPLICATION_ERROR);

@@ -7,11 +7,11 @@ export async function fetchSourcesList(organizationId: string) {
     const prisma = Database.getInstance();
     return await prisma.dataSource.findMany({
         where: {
-            organization_id: organizationId
+            organizationId: organizationId
         },
         select: {
             name: true,
-            integration_mechanism: true,
+            integrationType: true,
             host: true,
             port: true
         }
@@ -45,13 +45,13 @@ export async function createSource(
     return await prisma.dataSource.create({
         data: {
             name: name,
-            integration_mechanism: IntegrationType.POSTGRESQL,
+            integrationType: IntegrationType.POSTGRESQL,
             host: host,
             database: database,
             username: username,
             password: password,
             port: parseInt(port),
-            organization_id: organizationId
+            organizationId: organizationId
         }
     })
 }
@@ -61,7 +61,7 @@ export async function deleteDatasource(id: string, organizationId: string) {
     return await prisma.dataSource.delete({
         where: {
             id: id,
-            organization_id: organizationId
+            organizationId: organizationId
         }
     });
 }
@@ -72,7 +72,7 @@ export async function fetchDatabaseSchema(id: string, organizationId: string) {
     const datasource = await prisma.dataSource.findUniqueOrThrow({
         where: {
             id: id,
-            organization_id: organizationId
+            organizationId: organizationId
         }
     });
 
@@ -92,7 +92,7 @@ export async function fetchDatabaseSchema(id: string, organizationId: string) {
             `;
 
     let data = await databaseExecutor(
-        datasource.integration_mechanism,
+        datasource.integrationType,
         datasource.database,
         datasource.host,
         datasource.port,

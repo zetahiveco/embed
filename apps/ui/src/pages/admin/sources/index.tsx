@@ -32,14 +32,13 @@ export default function Sources() {
                         return (
                             <Box width="250px" border="1px solid #EBEBEB" shadow="sm" rounded="md" background="#fdfdfd" padding="1.5em" display="flex" flexDirection="column" gap={3} key={`src-${index}`}>
                                 <Text fontWeight={600} fontSize="21px">{source.name}</Text>
-                                <Text marginTop="-1em" fontSize="13px">{source.integration_mechanism.toLowerCase()}</Text>
+                                <Text marginTop="-1em" fontSize="13px">{source.integrationType.toLowerCase()}</Text>
                                 <Text>{source.host}:{source.port}</Text>
                                 <Button leftIcon={<HiTrash />} colorScheme="red" variant="outline">Delete</Button>
                             </Box>
                         )
                     })}
                 </Box>
-
             </Container>
         </AppBox>
     )

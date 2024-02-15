@@ -9,7 +9,6 @@ export default function Visualization() {
                     <Button colorScheme="blue">Create Visualization</Button>
                 </Box>
                 <Box>
-                    
                     <h1>Visualization</h1>
                 </Box>
             </Box>
