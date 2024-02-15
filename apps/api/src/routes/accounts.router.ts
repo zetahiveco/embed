@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { APPLICATION_ERROR } from "../utils/errors";
-import { checkIfUserExists, createUser, generateAccessTokens, refreshAccessToken, sendEmailInvite, verifyUserInvite } from "../services/user.service";
+import { checkIfUserExists, createUser, fetchOrganizations, generateAccessTokens, refreshAccessToken, sendEmailInvite, verifyUserInvite } from "../services/accounts.service";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
 import { verifyUserAuth } from "../middlewares/auth.middleware";
@@ -44,7 +44,7 @@ router.post(
 
             const userExists = await checkIfUserExists(req.body.email);
 
-            if(userExists) {
+            if (userExists) {
                 res.status(400).json({ detail: `user already exists` });
                 return;
             }
@@ -129,3 +129,37 @@ router.post(
         }
     }
 )
+
+
+router.get(
+    `/organizations`,
+    verifyUserAuth,
+    async (_, res) => {
+        try {
+            const organizations = await fetchOrganizations(res.locals.user_id);
+            res.status(200).json(organizations);
+            return;
+        } catch (err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
+
+
+router.get(
+    `/users/me`,
+    verifyUserAuth,
+    (_, res) => {
+        try {
+            res.status(200).json({ user_id: res.locals.user });
+            return;
+        } catch(err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
+
+
+export default router;
