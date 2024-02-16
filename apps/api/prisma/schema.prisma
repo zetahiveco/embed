@@ -30,6 +30,7 @@ enum ChartType {
   LINE_CHART
   TABLE_VIEW
   PIE_CHART
+  KPI_VIEW
 }
 
 enum MemberRoleType {
@@ -58,6 +59,7 @@ model Organization {
   dataSources    DataSource[]
   visualizations Visualization[]
   apiKeys        ApiKey[]
+  renderList     Render[]
 }
 
 model Member {
@@ -107,12 +109,25 @@ model DataSource {
 model Visualization {
   id             String       @id @default(uuid())
   name           String
-  chartType      ChartType    @map("chart_type")
   datasourceId   String       @map("organization_id")
   datasource     DataSource   @relation(references: [id], fields: [datasourceId])
   plainSql       String       @map("plain_sql")
   organizationId String
   organization   Organization @relation(references: [id], fields: [organizationId])
+  render         Render?
+}
+
+model Render {
+  chartType       ChartType     @map("chart_type")
+  visualization   Visualization @relation(references: [id], fields: [visualizationId])
+  visualizationId String        @unique @map("visualization_id")
+
+  organization   Organization @relation(references: [id], fields: [organizationId])
+  organizationId String       @map("organization_id")
+
+  format Json
+
+  @@id([visualizationId, organizationId])
 }
 
 model ApiKey {

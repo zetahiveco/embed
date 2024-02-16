@@ -12,7 +12,6 @@ export interface CreateSourceForm {
     password: string
 }
 
-
 interface SourcesState {
     sources: Array<any>
 

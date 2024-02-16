@@ -10,6 +10,7 @@ export async function fetchSourcesList(organizationId: string) {
             organizationId: organizationId
         },
         select: {
+            id: true,
             name: true,
             integrationType: true,
             host: true,

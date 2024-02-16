@@ -3,31 +3,59 @@ import { produce } from "immer";
 import { create } from "zustand";
 
 
-interface Visualization {
+export interface IVisualization {
     id: string
     name: string
-    chartType: string
     datasourceId: string
     plainSql: string
     organizationId: String
+    render: {
+        chartType: string
+        format: any
+    } | null
 }
 
-interface VisualizationForm {
+export interface VisualizationForm {
     name: string
-    chartType: string
-    datasourceId: string
+    datasource: string
     plainSql: string
 }
 
+export interface RenderForm {
+    chartType: string
+    renderFormat: any
+}
+
 interface VisualizationsStore {
-    data: Array<Visualization>
+    data: Array<IVisualization>
+    resultData: Array<any>
+    queryError: string
     fetchVisualizations: () => Promise<void>
-    addVisualization: (data: VisualizationForm) => Promise<void>
+    addVisualization: (data: VisualizationForm) => Promise<string>
+    updateVisualization: (id: string, data: VisualizationForm) => Promise<void>
     deleteVisualization: (id: string) => Promise<void>
+    upsertRenderFormat: (id: string, data: RenderForm) => Promise<void>
+    fetchVisualizationData: (id: string) => Promise<void>
 }
 
 export const useVisualizations = create<VisualizationsStore>((set) => ({
     data: [],
+    resultData: [],
+    queryError: "",
+    fetchVisualizationData: async (id: string) => {
+        try {
+            const res = await axios.get(`/visualizations/${id}/data`);
+            set(produce((draft)=>{
+                draft.resultData = res.data;
+                draft.queryError = "";
+            }));
+        } catch (err: any) {
+            set(produce((draft)=>{
+                draft.resultData = [];
+                draft.queryError = err.response.data;
+            }));
+        }
+    },
     fetchVisualizations: async () => {
         const res = await axios.get(`/visualizations`);
         set(produce((draft) => {
@@ -35,11 +63,12 @@ export const useVisualizations = create<VisualizationsStore>((set) => ({
         }))
     },
     addVisualization: async (data: VisualizationForm) => {
-        await axios.post(`/visualizations`, data);
+        const id = await axios.post(`/visualizations`, data);
         const res = await axios.get(`/visualizations`);
         set(produce((draft) => {
             draft.data = res.data;
         }))
+        return id.data;
     },
     updateVisualization: async (id: string, data: VisualizationForm) => {
         await axios.put(`/visualizations/${id}`, data);
@@ -53,6 +82,13 @@ export const useVisualizations = create<VisualizationsStore>((set) => ({
         set(produce((draft) => {
             const index = draft.visualizations.findIndex((viz: any) => viz.id === id);
             draft.visualizations.splice(index, 1);
+        }))
+    },
+    upsertRenderFormat: async (id: string, data: RenderForm) => {
+        await axios.post(`/visualizations/${id}/render`, data);
+        const res = await axios.get(`/visualizations`);
+        set(produce((draft) => {
+            draft.data = res.data;
         }))
     }
 }))
