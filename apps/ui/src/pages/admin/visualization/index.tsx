@@ -78,7 +78,11 @@ export default function Visualization() {
     }
 
     const getRenderFormat = () => {
-        return visualizations[visualizations.findIndex(v => v.id === currentVisualization)].render;
+        try {
+            return visualizations[visualizations.findIndex(v => v.id === currentVisualization)].render;
+        } catch (err) {
+            return null;
+        }
     }
 
     return (
