@@ -2,7 +2,8 @@
   "name": "embed",
   "description": "The open-source customer-facing embedded analytics and reports",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:ui": "pnpm --filter @embed/ui run dev",
+    "dev:api": "pnpm --filter @embed/api run dev"
   },
   "keywords": [
     "visualization",
@@ -12,7 +13,7 @@
   ],
   "packageManager": "pnpm@8.15.1",
   "author": "Zetahive Technologies Pvt. Ltd",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "typescript": "^5.3.3",
     "eslint": "^8.56.0",
