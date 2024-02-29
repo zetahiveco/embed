@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { APPLICATION_ERROR } from "../utils/errors";
-import { checkIfUserExists, createUser, fetchOrganizations, generateAccessTokens, refreshAccessToken, sendEmailInvite, verifyUserInvite } from "../services/accounts.service";
+import { checkIfUserExists, createUser, fetchMembers, fetchOrganizations, generateAccessTokens, getUser, refreshAccessToken, sendEmailInvite, verifyUserInvite } from "../services/accounts.service";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
 import { verifyUserAuth } from "../middlewares/auth.middleware";
@@ -147,19 +147,34 @@ router.get(
 
 
 router.get(
-    `/users/me`,
+    `/organizations/members`,
     verifyUserAuth,
-    (_, res) => {
+    verifyMembership,
+    async (_, res) => {
         try {
-            res.status(200).json({ userId: res.locals.user });
+            const members = await fetchMembers(res.locals.organization);
+            res.status(200).json(members);
             return;
-        } catch(err) {
+        } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
             return;
         }
     }
 )
 
-
+router.get(
+    `/users/me`,
+    verifyUserAuth,
+    async (_, res) => {
+        try {
+            const result = await getUser(res.locals.user);
+            res.status(200).json(result);
+            return;
+        } catch (err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
 
 export default router;

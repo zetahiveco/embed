@@ -243,6 +243,20 @@ export async function fetchMembers(organizationId: string) {
     })
 }
 
+export async function getUser(userId: string) {
+    const prisma = Database.getInstance();
+    return await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            id: true,
+            email: true,
+            name: true
+        }
+    })
+}
+
 
 export async function fetchUserInvites(organizationId: string) {
     const prisma = Database.getInstance();
@@ -257,6 +271,7 @@ export async function fetchUserInvites(organizationId: string) {
         }
     })
 }
+
 
 export async function deleteUserInvite(inviteId: string, organizationId: string) {
     const prisma = Database.getInstance();

@@ -3,32 +3,17 @@ import AppBox from "../../../components/appBox";
 import { HiUserCircle, HiOfficeBuilding } from "react-icons/hi";
 import { useState } from "react";
 import { IoKeySharp } from "react-icons/io5";
-
-function Users() {
-    return (
-        <Box></Box>
-    )
-}
-
-function Organization() {
-    return (
-        <Box></Box>
-    )
-}
-
-function ApiKeys() {
-    return (
-        <Box></Box>
-    )
-}
+import { ApiKeys } from "./apikeys";
+import User from "./user";
+import Organization from "./organization";
 
 export default function Settings() {
 
-    const [settingsToggle, setSettingsToggle] = useState<"users" | "organization" | "keys">("users");
+    const [settingsToggle, setSettingsToggle] = useState<"user" | "organization" | "keys">("user");
 
     const renderSettings = () => {
-        if (settingsToggle === "users") {
-            return <Users />
+        if (settingsToggle === "user") {
+            return <User />
         }
         if (settingsToggle === "organization") {
             return <Organization />
@@ -47,16 +32,16 @@ export default function Settings() {
                         <Divider />
                     </Flex>
                     <Box
-                        background={settingsToggle === "users" ? "#DBDBDB" : ""}
+                        background={settingsToggle === "user" ? "#DBDBDB" : ""}
                         rounded="md"
                         paddingY="8px"
                         paddingX="1em"
                         display="flex"
                         cursor="pointer"
-                        onClick={() => setSettingsToggle("users")}
+                        onClick={() => setSettingsToggle("user")}
                         alignItems="center"
                         gap={2}
-                    ><HiUserCircle fontSize="22px" />Users</Box>
+                    ><HiUserCircle fontSize="22px" />User</Box>
                     <Box
                         background={settingsToggle === "organization" ? "#DBDBDB" : ""}
                         rounded="md"
@@ -80,7 +65,7 @@ export default function Settings() {
                         onClick={() => setSettingsToggle("keys")}
                     ><IoKeySharp fontSize="22px" />API Keys</Box>
                 </Box>
-                <Box>
+                <Box width="calc(100% - 250px)">
                     {renderSettings()}
                 </Box>
             </Box>
