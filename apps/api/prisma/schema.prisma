@@ -131,9 +131,8 @@ model Render {
 }
 
 model ApiKey {
-  id             String       @id @default(uuid())
   name           String
-  apiKey         String       @unique @map("api_key")
+  apiKey         String       @id @unique @map("api_key")
   createdAt      DateTime     @default(now()) @map("created_at")
   organizationId String       @map("organization_id")
   organization   Organization @relation(references: [id], fields: [organizationId])

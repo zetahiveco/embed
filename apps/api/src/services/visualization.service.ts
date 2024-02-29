@@ -53,18 +53,21 @@ export async function updateVisualization(id: string, name: string, datasource: 
 }
 
 export async function getVisualizationData(id: string, organizationId: string) {
+
     const prisma = Database.getInstance();
+
     const visualization = await prisma.visualization.findFirstOrThrow({
         where: {
             id: id,
             organizationId: organizationId
         },
         include: {
-            datasource: true
+            datasource: true,
+            render: true
         }
     });
 
-    return await databaseExecutor(
+    const resultData = await databaseExecutor(
         visualization.datasource.integrationType,
         visualization.datasource.database,
         visualization.datasource.host,
@@ -73,7 +76,14 @@ export async function getVisualizationData(id: string, organizationId: string) {
         visualization.datasource.password,
         visualization.plainSql
     )
+
+    return {
+        resultData,
+        name: visualization.name,
+        renderFormat: visualization.render
+    }
 }
+
 
 export async function upsertRenderFormat(visualizationId: string, organizationId: string, chartType: string, renderFormat: any) {
     const prisma = Database.getInstance();

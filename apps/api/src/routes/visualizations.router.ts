@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { verifyUserAuth } from "../middlewares/auth.middleware";
+import { publicRenderAuth, verifyUserAuth } from "../middlewares/auth.middleware";
 import { verifyMembership } from "../middlewares/organization.middleware";
 import { APPLICATION_ERROR } from "../utils/errors";
 import { createVisualization, fetchVisualizations, getVisualizationData, updateVisualization, upsertRenderFormat } from "../services/visualization.service";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
+import { generateRenderToken } from "../services/secrets.service";
 
 const router = Router();
 
@@ -16,6 +17,7 @@ router.get(
         try {
             const result = await fetchVisualizations(res.locals.organization);
             res.status(200).json(result);
+            return;
         } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
             return;
@@ -43,6 +45,7 @@ router.post(
                 res.locals.organization
             );
             res.status(200).json({ detail: result });
+            return;
         } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
             return;
@@ -71,6 +74,7 @@ router.put(
                 res.locals.organization
             );
             res.status(200).json({ detail: "updated" });
+            return;
         } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
             return;
@@ -85,14 +89,18 @@ router.get(
     async (req, res) => {
         try {
             const result = await getVisualizationData(req.params.id, res.locals.organization);
-            res.status(200).json(result);
+            const renderToken = await generateRenderToken("", res.locals.organization); 
+            res.status(200).json({
+                result,
+                renderToken
+            });
+            return;
         } catch (err) {
             res.status(500).json(JSON.stringify(err));
             return;
         }
     }
 )
-
 
 router.post(
     "/:id/render",
@@ -114,11 +122,27 @@ router.post(
             )
             res.status(200).json({ detail: "updated" });
             return;
-        } catch(err) {
+        } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
             return;
         }
     }
 )
+
+router.get(
+    "/:id/public",
+    publicRenderAuth,
+    async (req, res) => {
+        try {
+            const result = await getVisualizationData(req.params.id, res.locals.resource);
+            res.status(200).json(result);
+            return;
+        } catch (err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
+
 
 export default router;

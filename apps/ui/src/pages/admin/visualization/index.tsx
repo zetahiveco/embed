@@ -8,6 +8,7 @@ import Editor from '@monaco-editor/react';
 import { HiChartBar, HiChartPie, HiPlus, HiSave } from "react-icons/hi";
 import { TbBrandPowershell } from "react-icons/tb";
 import UpdateRenderFormat from "./updateRenderFormat";
+import { Visualization as VisualizationElement } from "@embed/react";
 
 export default function Visualization() {
 
@@ -20,6 +21,7 @@ export default function Visualization() {
     const updateVisualization = useVisualizations(s => s.updateVisualization);
     const fetchVisualizationData = useVisualizations(s => s.fetchVisualizationData);
 
+    const renderToken = useVisualizations(s => s.renderToken);
 
     const resultData = useVisualizations(s => s.resultData);
     const queryError = useVisualizations(s => s.queryError);
@@ -44,17 +46,19 @@ export default function Visualization() {
     useEffect(() => {
         if (currentVisualization && currentVisualization !== "new") {
             const vizIndex = visualizations.findIndex(viz => viz.id === currentVisualization);
-            setValue("name", visualizations[vizIndex].name);
-            setValue("datasource", visualizations[vizIndex].datasourceId);
-            setValue("plainSql", visualizations[vizIndex].plainSql);
-            saveAndRunVisualization(false);
+            if (vizIndex > -1) {
+                setValue("name", visualizations[vizIndex].name);
+                setValue("datasource", visualizations[vizIndex].datasourceId);
+                setValue("plainSql", visualizations[vizIndex].plainSql);
+                saveAndRunVisualization(false);
+            }
         }
         if (currentVisualization === "new") {
             setValue("name", "");
             setValue("datasource", "");
             setValue("plainSql", "");
         }
-    }, [currentVisualization])
+    }, [visualizations, currentVisualization])
 
     const saveAndRunVisualization = async (save: boolean = true) => {
         try {
@@ -84,6 +88,7 @@ export default function Visualization() {
             return null;
         }
     }
+
 
     return (
         <AppBox>
@@ -182,8 +187,15 @@ export default function Visualization() {
                                         <Box display="flex" marginBottom="2em" >
                                             <Button onClick={() => setRenderFormatModal(true)} leftIcon={<HiChartPie />}>Render Chart</Button>
                                         </Box>
-                                        {getRenderFormat() ? <Box display="flex" flexDirection="column" gap={2}>
+                                        {getRenderFormat() ? <Box display="flex" marginBottom="2em" flexDirection="column" gap={2}>
                                             <FormLabel>Rendered Data</FormLabel>
+                                            <Box height="500px" width="100%">
+                                                <VisualizationElement 
+                                                    id={currentVisualization}
+                                                    server="http://localhost:8080"
+                                                    token={renderToken}
+                                                />
+                                            </Box>
                                         </Box> : null}
                                     </> : null}
                                     {queryError ? <Box border="1px solid #EBEBEB" padding="1em" color="red">
@@ -193,7 +205,6 @@ export default function Visualization() {
                                 </Flex>
                             </Box>
                             : null}
-
                         {!currentVisualization ?
                             <Box
                                 display="flex"
@@ -203,7 +214,7 @@ export default function Visualization() {
                                 width="1200px"
                                 height="100%"
                             >
-                                <Text>Not found visualizations</Text>
+                                <Text>{visualizations.length === 0 ? "Not found visualizations" : "Visualization not selected"}</Text>
                             </Box>
                             : null}
                     </Container>

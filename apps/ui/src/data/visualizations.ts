@@ -30,6 +30,7 @@ interface VisualizationsStore {
     data: Array<IVisualization>
     resultData: Array<any>
     queryError: string
+    renderToken: string
     fetchVisualizations: () => Promise<void>
     addVisualization: (data: VisualizationForm) => Promise<string>
     updateVisualization: (id: string, data: VisualizationForm) => Promise<void>
@@ -42,15 +43,17 @@ export const useVisualizations = create<VisualizationsStore>((set) => ({
     data: [],
     resultData: [],
     queryError: "",
+    renderToken: "",
     fetchVisualizationData: async (id: string) => {
         try {
             const res = await axios.get(`/visualizations/${id}/data`);
-            set(produce((draft)=>{
-                draft.resultData = res.data;
+            set(produce((draft) => {
+                draft.resultData = res.data.result.resultData;
+                draft.renderToken = res.data.renderToken;
                 draft.queryError = "";
             }));
         } catch (err: any) {
-            set(produce((draft)=>{
+            set(produce((draft) => {
                 draft.resultData = [];
                 draft.queryError = err.response.data;
             }));
@@ -68,7 +71,7 @@ export const useVisualizations = create<VisualizationsStore>((set) => ({
         set(produce((draft) => {
             draft.data = res.data;
         }))
-        return id.data;
+        return id.data.detail;
     },
     updateVisualization: async (id: string, data: VisualizationForm) => {
         await axios.put(`/visualizations/${id}`, data);

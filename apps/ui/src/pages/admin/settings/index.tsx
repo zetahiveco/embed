@@ -2,6 +2,7 @@ import { Box, Divider, Flex, Text } from "@chakra-ui/react";
 import AppBox from "../../../components/appBox";
 import { HiUserCircle, HiOfficeBuilding } from "react-icons/hi";
 import { useState } from "react";
+import { IoKeySharp } from "react-icons/io5";
 
 function Users() {
     return (
@@ -15,9 +16,15 @@ function Organization() {
     )
 }
 
+function ApiKeys() {
+    return (
+        <Box></Box>
+    )
+}
+
 export default function Settings() {
 
-    const [settingsToggle, setSettingsToggle] = useState<"users" | "organization">("users");
+    const [settingsToggle, setSettingsToggle] = useState<"users" | "organization" | "keys">("users");
 
     const renderSettings = () => {
         if (settingsToggle === "users") {
@@ -25,6 +32,9 @@ export default function Settings() {
         }
         if (settingsToggle === "organization") {
             return <Organization />
+        }
+        if (settingsToggle === "keys") {
+            return <ApiKeys />
         }
     }
 
@@ -58,6 +68,17 @@ export default function Settings() {
                         cursor="pointer"
                         onClick={() => setSettingsToggle("organization")}
                     ><HiOfficeBuilding fontSize="22px" />Organization</Box>
+                    <Box
+                        background={settingsToggle === "keys" ? "#DBDBDB" : ""}
+                        rounded="md"
+                        paddingY="8px"
+                        paddingX="1em"
+                        display="flex"
+                        alignItems="center"
+                        gap={2}
+                        cursor="pointer"
+                        onClick={() => setSettingsToggle("keys")}
+                    ><IoKeySharp fontSize="22px" />API Keys</Box>
                 </Box>
                 <Box>
                     {renderSettings()}
