@@ -1,3 +1,3 @@
 # Embed React SDK
 
-## Visit docs understand how to integrate this.
+Visit docs to learn how to integrate this.
