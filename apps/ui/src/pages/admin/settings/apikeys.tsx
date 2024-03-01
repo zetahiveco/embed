@@ -70,7 +70,7 @@ export function ApiKeys() {
                         <Flex key={`set-${index}`} alignItems="center" gap={3} paddingY="1em" paddingX="1em" border="1px solid #EBEBEB" rounded="md">
                             <Text minW="100px" fontWeight={500}>{secret.name}</Text>
                             <Input width="100%" disabled value={secret.apiKey} />
-                            <Button width="150px" leftIcon={<HiClipboardCopy />}>Copy</Button>
+                            <Button onClick={() => navigator.clipboard.writeText(secret.apiKey)} width="150px" leftIcon={<HiClipboardCopy />}>Copy</Button>
                             <Button width="150px" colorScheme="red" variant="outline" leftIcon={<HiTrash />}>Delete</Button>
                         </Flex>
                     )

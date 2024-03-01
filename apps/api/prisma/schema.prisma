@@ -39,13 +39,14 @@ enum MemberRoleType {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  members   Member[]
+  id               String   @id @default(uuid())
+  name             String
+  email            String   @unique
+  password         String
+  passwordResetOtp String?
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  members          Member[]
 }
 
 model Organization {

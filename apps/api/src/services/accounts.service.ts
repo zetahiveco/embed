@@ -6,7 +6,10 @@ import { generateOTP } from "../utils/otp";
 import Database from "../storage/db";
 
 export async function sendEmailInvite(email: string, organizationId: string, role: string) {
+
     const prisma = Database.getInstance();
+
+    let isNewUser = true;
 
     const user = await prisma.user.findFirst({
         where: {
@@ -15,14 +18,23 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
     })
 
     if (user) {
-        throw new Error("user already exists");
+        const member = await prisma.member.findFirst({
+            where: {
+                userId: user.id,
+                organizationId: organizationId
+            }
+        })
+
+        if (member) {
+            throw new Error("member already exists");
+        }
+
+        isNewUser = false;
     }
 
     const otp = generateOTP(6);
 
-    const link = `${process.env.INSTANCE_CLIENT_URL}/auth/accept-invite?email=${email}&otp=${otp}`;
-
-    const userInvite = await prisma.userInvite.findFirst({
+    let userInvite = await prisma.userInvite.findFirst({
         where: {
             email: email
         }
@@ -46,7 +58,7 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
             }
         })
     } else {
-        await prisma.userInvite.create({
+        userInvite = await prisma.userInvite.create({
             data: {
                 email: email,
                 otp: otp,
@@ -56,6 +68,8 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
             }
         })
     }
+
+    const link = `${process.env.INSTANCE_CLIENT_URL}/admin/auth/accept-invite?isNewUser=${isNewUser}&email=${email}&otp=${otp}&inviteId=${userInvite.id}`;
 
     await sendEmail(
         email,
@@ -67,10 +81,11 @@ export async function sendEmailInvite(email: string, organizationId: string, rol
 }
 
 
-export async function verifyUserInvite(email: string, otp: string) {
+export async function verifyUserInvite(id: string, email: string, otp: string) {
     const prisma = Database.getInstance();
     const userInvite = await prisma.userInvite.findFirst({
         where: {
+            id: id,
             email: email
         }
     })
@@ -78,7 +93,7 @@ export async function verifyUserInvite(email: string, otp: string) {
     if (userInvite && userInvite.otp === otp) {
         await prisma.userInvite.delete({
             where: {
-                email: email
+                id: id
             }
         })
         return { status: true, role: userInvite.role, organizationId: userInvite.organizationId };
@@ -144,7 +159,6 @@ export async function createUser(name: string, email: string, password: string, 
             }
         })
     })
-
 }
 
 export async function generateAccessTokens(email: string, password: string) {
@@ -283,3 +297,81 @@ export async function deleteUserInvite(inviteId: string, organizationId: string)
         }
     })
 }
+
+
+export async function changePassword(userId: string, oldPassword: string, newPassword: string) {
+    const prisma = Database.getInstance();
+    const user = await prisma.user.findFirstOrThrow({
+        where: {
+            id: userId
+        }
+    })
+    const match = await bcrypt.compare(oldPassword, user.password);
+    if (!match) {
+        throw new Error("invalid password");
+    }
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+    return await prisma.user.update({
+        where: {
+            id: userId
+        },
+        data: {
+            password: hashPassword
+        }
+    })
+}
+
+
+export async function sendPasswordResetRequest(email: string) {
+    const prisma = Database.getInstance();
+
+
+    const otp = generateOTP(6);
+
+    await prisma.user.update({
+        where: {
+            email: email
+        },
+        data: {
+            passwordResetOtp: otp
+        }
+    })
+
+    const link = `${process.env.INSTANCE_CLIENT_URL}/admin/auth/reset-password?email=${email}&otp=${otp}`;
+
+    await sendEmail(
+        email,
+        `Link to reset your password`,
+        `Hi,\nUse this link ${link} to reset your password.\nWith Regards,\nTeam.`
+    )
+
+    return;
+}
+
+
+export async function resetPassword(email: string, otp: string, password: string) {
+    const prisma = Database.getInstance();
+
+    const user = await prisma.user.findFirstOrThrow({
+        where: {
+            email: email
+        }
+    });
+
+    if (user.passwordResetOtp && user.passwordResetOtp !== otp) {
+        throw new Error("invalid otp");
+    }
+
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    return await prisma.user.update({
+        where: {
+            email: email
+        },
+        data: {
+            password: hashPassword,
+            passwordResetOtp: null
+        }
+    })
+}
+

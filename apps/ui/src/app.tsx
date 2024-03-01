@@ -9,6 +9,9 @@ import Cookies from "js-cookie";
 import { useEffect } from "react";
 import Sources from "./pages/admin/sources";
 import Settings from "./pages/admin/settings";
+import AcceptInvite from "./pages/admin/auth/accept";
+import ForgotPassword from "./pages/admin/auth/forgot";
+import ResetPassword from "./pages/admin/auth/reset";
 
 axios.interceptors.request.use(async (request) => {
   request.baseURL = import.meta.env["REACT_APP_API"];
@@ -53,6 +56,18 @@ function App() {
     {
       path: "/admin/auth/signup",
       element: <Signup />
+    },
+    {
+      path: "/admin/auth/accept-invite",
+      element: <AcceptInvite />
+    },
+    {
+      path: "/admin/auth/forgot-password",
+      element: <ForgotPassword />
+    },
+    {
+      path: "/admin/auth/reset-password",
+      element: <ResetPassword />
     }
   ])
 
@@ -72,6 +87,10 @@ function App() {
     {
       path: "/admin/settings",
       element: <Settings />
+    },
+    {
+      path: "/admin/auth/accept-invite",
+      element: <AcceptInvite />
     }
   ])
 

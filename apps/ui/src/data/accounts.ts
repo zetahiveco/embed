@@ -4,6 +4,17 @@ import { decodeJWT } from "../utils/jwt";
 import Cookies from "js-cookie";
 import { produce } from "immer";
 
+
+export interface ChangePasswordForm {
+    oldPassword: string
+    newPassword: string
+}
+
+export interface InviteUserForm {
+    email: string
+    role: string
+}
+
 interface AccountsStore {
     userId: string
     name: string
@@ -11,12 +22,21 @@ interface AccountsStore {
     organizations: Array<any>
     currentOrganization: string
     members: Array<any>
+    userInvites: Array<any>
     login: (email: string, password: string) => Promise<void>
     signup: (name: string, company: string, email: string, password: string) => Promise<void>
     fetchOrganizations: () => Promise<void>
     fetchUserData: () => Promise<void>
     switchOrganization: (organizationId: string) => void
     fetchMembers: () => Promise<void>
+    changePassword: (data: ChangePasswordForm) => Promise<void>
+    logout: () => void
+    fetchUserInvites: () => Promise<void>
+    inviteUser: (data: InviteUserForm) => Promise<void>
+    removeInvite: (id: string) => Promise<void>
+    acceptInvite: (data: any) => Promise<void>
+    forgotPassword: (email: string) => Promise<void>
+    resetPassword: (data: any) => Promise<void>
 }
 
 export const useAccounts = create<AccountsStore>((set) => ({
@@ -26,7 +46,7 @@ export const useAccounts = create<AccountsStore>((set) => ({
     organizations: [],
     currentOrganization: "",
     members: [],
-
+    userInvites: [],
     login: async (email: string, password: string) => {
         const res = await axios.post(`/accounts/auth/login`, { email, password });
         let accessDecoded = decodeJWT(res.data["accessToken"]);
@@ -82,5 +102,40 @@ export const useAccounts = create<AccountsStore>((set) => ({
     fetchMembers: async () => {
         const res = await axios.get(`/accounts/organizations/members`);
         set(produce((draft) => { draft.members = res.data }));
+    },
+    logout: () => {
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        Cookies.remove("organization-id");
+        window.location.href = "/";
+    },
+    changePassword: async (data: ChangePasswordForm) => {
+        await axios.put(`/accounts/users/change-password`, data);
+    },
+    fetchUserInvites: async () => {
+        const res = await axios.get(`/accounts/organizations/user-invites`);
+        set(produce((draft) => { draft.userInvites = res.data }));
+    },
+    inviteUser: async (data: InviteUserForm) => {
+        await axios.post(`/accounts/organizations/invite-user`, data);
+        const res = await axios.get(`/accounts/organizations/user-invites`);
+        set(produce((draft) => { draft.userInvites = res.data }));
+    },
+    removeInvite: async (id: string) => {
+        await axios.delete(`/accounts/organizations/user-invites/${id}`);
+        set(produce((draft) => {
+            let index = draft.userInvites.findIndex((ui: any) => ui.id === id);
+            draft.userInvites.splice(index, 1);
+        }));
+    },
+    acceptInvite: async (data: any) => {
+        await axios.post(`/accounts/auth/accept-invite`, data);
+        window.location.href = "/";
+    },
+    forgotPassword: async (email: string) => {
+        await axios.post(`/accounts/auth/forgot-password`, { email: email });
+    },
+    resetPassword: async (data: any) => {
+        await axios.post(`/accounts/auth/reset-password`, data);
     }
 }))

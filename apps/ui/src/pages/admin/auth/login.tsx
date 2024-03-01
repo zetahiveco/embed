@@ -50,7 +50,7 @@ export default function Login() {
                     <Input {...register("password", { required: true })} type="password" placeholder="Your Password" />
                     <FormErrorMessage>This field is required</FormErrorMessage>
                 </FormControl>
-                <Button loadingText="Logging In" isLoading={loading} type="submit">Login</Button>
+                <Button colorScheme="blue" loadingText="Logging In" isLoading={loading} type="submit">Login</Button>
                 <Box display="flex" gap={2}>
                     <Link style={{ textDecoration: "underline", color: "blue" }} to="/admin/auth/signup">Create your account now</Link>
                     <Link style={{ textDecoration: "underline", color: "blue" }} to="/admin/auth/forgot-password">Forgot Password</Link>

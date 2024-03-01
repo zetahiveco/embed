@@ -70,7 +70,7 @@ export default function Signup() {
                     <Input {...register("password", { required: true })} type="password" placeholder="Your Password" />
                     <FormErrorMessage>This field is required</FormErrorMessage>
                 </FormControl>
-                <Button isLoading={loading} loadingText="Creating your account" type="submit">Create an account</Button>
+                <Button colorScheme="blue" isLoading={loading} loadingText="Creating your account" type="submit">Create an account</Button>
                 <Link style={{ textDecoration: "underline", color: "blue" }} to="/admin/auth/login">Have an account? Login Now</Link>
             </AuthBox>
         </form>
