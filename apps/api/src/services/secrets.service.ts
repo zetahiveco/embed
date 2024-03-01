@@ -36,7 +36,64 @@ export async function deleteApiKey(key: string, organizationId: string) {
 }
 
 
-export async function generateRenderToken(key: string, organizationId: string = "") {
+
+export async function getTestVariables(organizationId: string) {
+    const prisma = Database.getInstance();
+
+    return await prisma.testVariable.findMany({
+        where: {
+            organizationId: organizationId
+        }
+    })
+
+}
+
+
+export async function createTestVariable(name: string, type: string, value: string, organizationId: string) {
+    const prisma = Database.getInstance();
+
+    const exists = await prisma.testVariable.findFirst({
+        where: {
+            name: name,
+            organizationId: organizationId
+        }
+    })
+
+    if (exists) {
+        throw new Error("variable exists");
+    }
+
+    if (type !== "int" && type !== "string" && type === "boolean") {
+        throw new Error("invalid type");
+    }
+
+    await prisma.testVariable.create({
+        data: {
+            name: name,
+            type: type,
+            value: value,
+            organizationId: organizationId
+        }
+    })
+
+    return;
+}
+
+
+export async function deleteTestVariable(id: string, organizationId: string) {
+    const prisma = Database.getInstance();
+
+    return await prisma.testVariable.delete({
+        where: {
+            id: id,
+            organizationId: organizationId
+        }
+    })
+
+}
+
+
+export async function generateRenderToken(key: string, variables: Array<{ name: string, type: string, value: string }> = [], organizationId: string = "") {
 
     if (!organizationId) {
         const prisma = Database.getInstance();
@@ -51,9 +108,9 @@ export async function generateRenderToken(key: string, organizationId: string = 
     const tokenExpiry = new Date();
     tokenExpiry.setMinutes(tokenExpiry.getMinutes() + 5);
 
-
     const token = jwt.sign({
-        resourceId: organizationId
+        resourceId: organizationId,
+        variables: variables
     }, process.env["SIGNING_SECRET"] as string, { expiresIn: tokenExpiry.getTime() });
 
     return token;

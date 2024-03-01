@@ -3,7 +3,7 @@ import AppBox from "../../../components/appBox";
 import { HiUserCircle, HiOfficeBuilding } from "react-icons/hi";
 import { useState } from "react";
 import { IoKeySharp } from "react-icons/io5";
-import { ApiKeys } from "./apikeys";
+import { Secrets } from "./secrets";
 import User from "./user";
 import Organization from "./organization";
 
@@ -19,7 +19,7 @@ export default function Settings() {
             return <Organization />
         }
         if (settingsToggle === "keys") {
-            return <ApiKeys />
+            return <Secrets />
         }
     }
 
@@ -63,7 +63,7 @@ export default function Settings() {
                         gap={2}
                         cursor="pointer"
                         onClick={() => setSettingsToggle("keys")}
-                    ><IoKeySharp fontSize="22px" />API Keys</Box>
+                    ><IoKeySharp fontSize="22px" />Secrets</Box>
                 </Box>
                 <Box width="calc(100% - 250px)">
                     {renderSettings()}
@@ -71,5 +71,4 @@ export default function Settings() {
             </Box>
         </AppBox>
     )
-
 }

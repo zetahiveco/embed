@@ -77,7 +77,6 @@ router.delete(
     }
 )
 
-
 router.get(
     "/:id/schema",
     verifyUserAuth,
@@ -92,7 +91,6 @@ router.get(
         }
     }
 )
-
 
 
 export default router;

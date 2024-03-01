@@ -5,7 +5,7 @@ import { APPLICATION_ERROR } from "../utils/errors";
 import { createVisualization, fetchVisualizations, getVisualizationData, updateVisualization, upsertRenderFormat } from "../services/visualization.service";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
-import { generateRenderToken } from "../services/secrets.service";
+import { generateRenderToken, getTestVariables } from "../services/secrets.service";
 
 const router = Router();
 
@@ -89,7 +89,8 @@ router.get(
     async (req, res) => {
         try {
             const result = await getVisualizationData(req.params.id, res.locals.organization);
-            const renderToken = await generateRenderToken("", res.locals.organization); 
+            const testVariables = await getTestVariables(res.locals.organization);
+            const renderToken = await generateRenderToken("", testVariables, res.locals.organization); 
             res.status(200).json({
                 result,
                 renderToken

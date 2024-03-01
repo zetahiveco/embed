@@ -56,11 +56,11 @@ model Organization {
   updatedAt      DateTime        @updatedAt @map("updated_at")
   members        Member[]
   userInvites    UserInvite[]
-  apps           Application[]
   dataSources    DataSource[]
   visualizations Visualization[]
   apiKeys        ApiKey[]
   renderList     Render[]
+  testVariables  TestVariable[]
 }
 
 model Member {
@@ -81,14 +81,6 @@ model UserInvite {
   role           MemberRoleType
   organizationId String         @map("organization_id")
   organization   Organization   @relation(references: [id], fields: [organizationId])
-}
-
-model Application {
-  id             String       @id @default(uuid())
-  name           String
-  organizationId String       @map("organization_id")
-  organization   Organization @relation(references: [id], fields: [organizationId])
-  createdAt      DateTime     @map("createdAt")
 }
 
 model DataSource {
@@ -135,6 +127,15 @@ model ApiKey {
   name           String
   apiKey         String       @id @unique @map("api_key")
   createdAt      DateTime     @default(now()) @map("created_at")
+  organizationId String       @map("organization_id")
+  organization   Organization @relation(references: [id], fields: [organizationId])
+}
+
+model TestVariable {
+  id             String       @id @default(uuid())
+  name           String
+  type           String
+  value          String
   organizationId String       @map("organization_id")
   organization   Organization @relation(references: [id], fields: [organizationId])
 }

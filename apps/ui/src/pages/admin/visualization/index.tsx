@@ -89,7 +89,6 @@ export default function Visualization() {
         }
     }
 
-
     return (
         <AppBox>
             <Box display="flex" height="100%" width="100%">

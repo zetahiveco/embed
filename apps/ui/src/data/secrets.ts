@@ -2,42 +2,80 @@ import axios from "axios";
 import { produce } from "immer";
 import { create } from "zustand";
 
-interface ISecret {
+interface IApiKey {
     name: string
     apiKey: string
 }
 
-export interface CreateSecretForm {
+export interface CreateKeyForm {
     name: string
 }
 
+export interface ITestVariable {
+    id: string
+    name: string
+    type: string
+    value: string
+}
+
+export interface TestVariableForm {
+    name: string
+    type: string
+    value: string
+}
+
 interface SecretsStore {
-    secrets: Array<ISecret>
-    getSecrets: () => Promise<void>
-    createSecret: (data: CreateSecretForm) => Promise<void>
-    deleteSecret: (apiKey: string) => Promise<void>
+    keys: Array<IApiKey>
+    getKeys: () => Promise<void>
+    createKey: (data: CreateKeyForm) => Promise<void>
+    deleteKey: (apiKey: string) => Promise<void>
+    testVariables: Array<ITestVariable>
+    getTestVariables: () => Promise<void>
+    createTestVariable: (data: TestVariableForm) => Promise<void>
+    deleteTestVariable: (id: string) => Promise<void>
 }
 
 export const useSecrets = create<SecretsStore>((set) => ({
-    secrets: [],
-    getSecrets: async () => {
-        const res = await axios.get(`/api-keys`);
+    keys: [],
+    testVariables: [],
+    getKeys: async () => {
+        const res = await axios.get(`/secrets/api-keys`);
         set(produce((draft) => {
-            draft.secrets = res.data;
+            draft.keys = res.data;
         }))
     },
-    createSecret: async (data: CreateSecretForm) => {
-        await axios.post(`/api-keys`, data);
-        const res = await axios.get(`/api-keys`);
+    createKey: async (data: CreateKeyForm) => {
+        await axios.post(`/secrets/api-keys`, data);
+        const res = await axios.get(`/secrets/api-keys`);
         set(produce((draft) => {
-            draft.secrets = res.data;
+            draft.keys = res.data;
         }))
     },
-    deleteSecret: async (key: string) => {
-        await axios.delete(`/api-keys/${key}`);
+    deleteKey: async (key: string) => {
+        await axios.delete(`/secrets/api-keys/${key}`);
         set(produce((draft) => {
-            const index = draft.secrets.findIndex((s: ISecret) => s.apiKey === key);
-            draft.secrets.splice(index, 1);
+            const index = draft.keys.findIndex((k: IApiKey) => k.apiKey === key);
+            draft.keys.splice(index, 1);
+        }))
+    },
+    getTestVariables: async () => {
+        const res = await axios.get(`/secrets/test-variables`);
+        set(produce((draft) => {
+            draft.testVariables = res.data;
+        }))
+    },
+    createTestVariable: async (data: TestVariableForm) => {
+        await axios.post(`/secrets/test-variables`, data);
+        const res = await axios.get(`/secrets/test-variables`);
+        set(produce((draft) => {
+            draft.testVariables = res.data;
+        }))
+    },
+    deleteTestVariable: async (id: string) => {
+        await axios.delete(`/secrets/test-variables/${id}`);
+        set(produce((draft) => {
+            const index = draft.keys.findIndex((v: ITestVariable) => v.id === id);
+            draft.testVariables.splice(index, 1);
         }))
     }
 }))
