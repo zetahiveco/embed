@@ -61,6 +61,8 @@ model Organization {
   apiKeys        ApiKey[]
   renderList     Render[]
   testVariables  TestVariable[]
+  dashboards     Dashboard[]
+  dashboardCards DashboardCard[]
 }
 
 model Member {
@@ -100,14 +102,15 @@ model DataSource {
 }
 
 model Visualization {
-  id             String       @id @default(uuid())
+  id             String          @id @default(uuid())
   name           String
-  datasourceId   String       @map("organization_id")
-  datasource     DataSource   @relation(references: [id], fields: [datasourceId])
-  plainSql       String       @map("plain_sql")
+  datasourceId   String          @map("organization_id")
+  datasource     DataSource      @relation(references: [id], fields: [datasourceId])
+  plainSql       String          @map("plain_sql")
   organizationId String
-  organization   Organization @relation(references: [id], fields: [organizationId])
+  organization   Organization    @relation(references: [id], fields: [organizationId])
   render         Render?
+  dashboardCards DashboardCard[]
 }
 
 model Render {
@@ -138,4 +141,23 @@ model TestVariable {
   value          String
   organizationId String       @map("organization_id")
   organization   Organization @relation(references: [id], fields: [organizationId])
+}
+
+model Dashboard {
+  id             String          @id @default(uuid())
+  name           String
+  organizationId String          @map("organization_id")
+  organization   Organization    @relation(references: [id], fields: [organizationId])
+  cards          DashboardCard[]
+}
+
+model DashboardCard {
+  visualizationId String        @map("visualization_id")
+  visualization   Visualization @relation(references: [id], fields: [visualizationId])
+  dashboardId     String        @map("dashboard_id")
+  dashboard       Dashboard     @relation(references: [id], fields: [dashboardId])
+  organizationId  String        @map("organization_id")
+  organization    Organization  @relation(references: [id], fields: [organizationId])
+
+  @@id([dashboardId, organizationId])
 }

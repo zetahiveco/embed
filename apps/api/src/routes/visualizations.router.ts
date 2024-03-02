@@ -90,7 +90,15 @@ router.get(
         try {
             const result = await getVisualizationData(req.params.id, res.locals.organization);
             const testVariables = await getTestVariables(res.locals.organization);
-            const renderToken = await generateRenderToken("", testVariables, res.locals.organization); 
+            const renderToken = await generateRenderToken(
+                "",
+                testVariables.map((v) => ({
+                    name: v.name,
+                    type: v.type,
+                    value: v.value
+                })),
+                res.locals.organization
+            );
             res.status(200).json({
                 result,
                 renderToken

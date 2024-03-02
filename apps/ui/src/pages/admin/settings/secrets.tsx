@@ -47,8 +47,6 @@ function NewTestVariableForm(props: any) {
     const { register, handleSubmit, formState: { errors } } = useForm<TestVariableForm>();
     const [loading, setLoading] = useState(false);
     const createTestVariable = useSecrets(s => s.createTestVariable);
-    const deleteTestVariable = useSecrets(s => s.deleteTestVariable);
-    const deleteApiKey = useSecrets(s => s.deleteKey);
 
     const doSubmit = async (data: TestVariableForm) => {
         try {

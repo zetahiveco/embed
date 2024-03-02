@@ -99,7 +99,7 @@ export default function Visualization() {
                     </ModalContent>
                 </Modal>
                 <Box display="flex" border="1px solid #EBEBEB" flexDirection="column" paddingX="1em" paddingY="1em" width="250px" height="100%" background="#f8f8f8">
-                    <Button leftIcon={<HiPlus />} marginBottom="2em" onClick={() => setCurrentVisualization("new")} colorScheme="blue">Create Visualization</Button>
+                    <Button leftIcon={<HiPlus />} marginBottom="1em" onClick={() => setCurrentVisualization("new")} colorScheme="blue">Create Visualization</Button>
                     {visualizations.map((visualization: IVisualization, index: number) => {
                         return (
                             <Box

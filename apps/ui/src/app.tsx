@@ -12,6 +12,7 @@ import Settings from "./pages/admin/settings";
 import AcceptInvite from "./pages/admin/auth/accept";
 import ForgotPassword from "./pages/admin/auth/forgot";
 import ResetPassword from "./pages/admin/auth/reset";
+import Dashboards from "./pages/admin/dashboards";
 
 axios.interceptors.request.use(async (request) => {
   request.baseURL = import.meta.env["REACT_APP_API"];
@@ -79,6 +80,10 @@ function App() {
     {
       path: "/admin/visualizations",
       element: <Visualization />
+    },
+    {
+      path: "/admin/dashboards",
+      element: <Dashboards />
     },
     {
       path: "/admin/sources",

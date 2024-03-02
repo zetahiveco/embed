@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { TbChartAreaFilled, TbSettingsFilled } from "react-icons/tb";
 import { HiQuestionMarkCircle, HiDatabase } from "react-icons/hi";
 import { useLocation, useNavigate } from "react-router-dom";
+import { MdSpaceDashboard } from "react-icons/md";
 
 export default function AppBox(props: any) {
 
@@ -25,7 +26,18 @@ export default function AppBox(props: any) {
                     >
                         <TbChartAreaFilled />
                     </Box>
-
+                    <Box
+                        onClick={() => navigate("/admin/dashboards")}
+                        rounded="md"
+                        fontSize="22px"
+                        padding="10px"
+                        cursor="pointer"
+                        color="#2e2e2e"
+                        _hover={{ background: "#DBDBDB" }}
+                        background={location.pathname === "/admin/dashboards" ? "#DBDBDB" : ""}
+                    >
+                        <MdSpaceDashboard />
+                    </Box>
                     <Box
                         onClick={() => navigate("/admin/sources")}
                         rounded="md"
