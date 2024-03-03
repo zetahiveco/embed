@@ -3,8 +3,9 @@ import { verifyUserAuth } from "../middlewares/auth.middleware";
 import { verifyMembership } from "../middlewares/organization.middleware";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
-import { createDashboard, deleteDashbaord, getDashboards } from "../services/dashboards.service";
+import { createDashboard, deleteDashbaord, getDashboards, updateDashboard } from "../services/dashboards.service";
 import { APPLICATION_ERROR } from "../utils/errors";
+import { generateRenderToken, getTestVariables } from "../services/secrets.service";
 
 const router = Router();
 
@@ -14,8 +15,21 @@ router.get(
     verifyMembership,
     async (_, res) => {
         try {
+            const testVariables = await getTestVariables(res.locals.organization);
+            const renderToken = await generateRenderToken(
+                "",
+                testVariables.map((v) => ({
+                    name: v.name,
+                    type: v.type,
+                    value: v.value
+                })),
+                res.locals.organization
+            );
             const result = await getDashboards(res.locals.organization);
-            res.status(200).json(result);
+            res.status(200).json({
+                result,
+                renderToken
+            });
             return;
         } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
@@ -36,6 +50,33 @@ router.post(
     async (req, res) => {
         try {
             await createDashboard(req.body.name, res.locals.organization);
+            res.status(201).json({ detail: "created" });
+            return;
+        } catch (err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
+
+router.put(
+    "/:id",
+    verifyUserAuth,
+    verifyMembership,
+    validateRequest({
+        body: z.object({
+            name: z.string(),
+            layout: z.any(),
+        })
+    }),
+    async (req, res) => {
+        try {
+            await updateDashboard(
+                req.body.name,
+                req.params.id,
+                res.locals.organization,
+                req.body.layout
+            );
             res.status(201).json({ detail: "created" });
             return;
         } catch (err) {

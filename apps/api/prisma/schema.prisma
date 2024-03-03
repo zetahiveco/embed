@@ -62,7 +62,6 @@ model Organization {
   renderList     Render[]
   testVariables  TestVariable[]
   dashboards     Dashboard[]
-  dashboardCards DashboardCard[]
 }
 
 model Member {
@@ -110,7 +109,6 @@ model Visualization {
   organizationId String
   organization   Organization    @relation(references: [id], fields: [organizationId])
   render         Render?
-  dashboardCards DashboardCard[]
 }
 
 model Render {
@@ -148,16 +146,5 @@ model Dashboard {
   name           String
   organizationId String          @map("organization_id")
   organization   Organization    @relation(references: [id], fields: [organizationId])
-  cards          DashboardCard[]
-}
-
-model DashboardCard {
-  visualizationId String        @map("visualization_id")
-  visualization   Visualization @relation(references: [id], fields: [visualizationId])
-  dashboardId     String        @map("dashboard_id")
-  dashboard       Dashboard     @relation(references: [id], fields: [dashboardId])
-  organizationId  String        @map("organization_id")
-  organization    Organization  @relation(references: [id], fields: [organizationId])
-
-  @@id([dashboardId, organizationId])
+  layout         Json?
 }
