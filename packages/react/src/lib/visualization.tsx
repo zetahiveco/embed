@@ -59,7 +59,10 @@ export function Visualization(props: VisualizationProps) {
 
                 setOptions({
                     chart: {
-                        type: "pie"
+                        type: "pie",
+                        toolbar: {
+                            show: false
+                        }
                     },
                     series: series,
                     labels: labels,
@@ -86,7 +89,10 @@ export function Visualization(props: VisualizationProps) {
 
                 setOptions({
                     chart: {
-                        type: "bar"
+                        type: "bar",
+                        toolbar: {
+                            show: false
+                        }
                     },
                     series: [{
                         name: renderFormat.format.y,
@@ -116,7 +122,10 @@ export function Visualization(props: VisualizationProps) {
 
                 setOptions({
                     chart: {
-                        type: "line"
+                        type: "line",
+                        toolbar: {
+                            show: false
+                        }
                     },
                     series: [{
                         name: renderFormat.format.y,
@@ -223,7 +232,6 @@ export function Visualization(props: VisualizationProps) {
                 className={css`
                     height: 100%;
                     width: 100%;
-                    box-shadow: 0px 1px 5px #EBEBEB;
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
@@ -245,22 +253,84 @@ export function Visualization(props: VisualizationProps) {
                     width: 100%;
                     display: flex;
                     overflow: auto;
+                    padding-right: 5px;
+                    background: white;
+
+                    ::-webkit-scrollbar {
+                        width: 10px;
+                    }
+
+                    ::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 5px;
+                    }
+
+                    ::-webkit-scrollbar-thumb {
+                        background: #dbdbdb;
+                        border-radius: 5px;
+                    }
+
+                    ::-webkit-scrollbar-thumb:hover {
+                        background: #d3d3d3;
+                    }
                 `}
             >
-                <table>
+                <table
+                    className={css`
+                        background: white;
+                        border-collapse: collapse;
+                    `}
+                >
                     <thead>
-                        <tr>
+                        <tr
+                            className={css`
+                                width: 100%;
+                                position: sticky;
+                                background: #EBEBEB;
+                                top: 0;
+                                left: 0;
+                            `}
+                        >
                             {Object.keys(resultData[0]).map((key: string, index: number) => {
-                                return <th key={`th-${index}`}>{key}</th>
+                                return (
+                                    <th
+                                        className={css`
+                                            border: 1px solid #d3d3d3;
+                                            border-collapse: collapse;
+                                            padding: 1em;
+                                        `}
+                                        key={`th-${index}`}
+                                    >
+                                        {key}
+                                    </th>
+                                )
                             })}
                         </tr>
                     </thead>
                     <tbody>
                         {resultData.map((row: any, rindex: number) => {
                             return (
-                                <tr key={`tr-${rindex}`}>
+                                <tr
+                                    key={`tr-${rindex}`}
+                                    className={css`
+                                        border: 1px solid #EBEBEB;
+                                        border-collapse: collapse;
+                                        :hover {
+                                            background: #f1f1f1;
+                                        }
+                                    `}
+                                >
                                     {Object.keys(row).map((column: string, cindex: number) => {
-                                        return <td key={`td-${rindex}-${cindex}`}>{row[column]}</td>
+                                        return (
+                                            <td
+                                                className={css`
+                                                    padding: 0.5em 2em 0.5em 2em;
+                                                `}
+                                                key={`td-${rindex}-${cindex}`}
+                                            >
+                                                {row[column]}
+                                            </td>
+                                        )
                                     })}
                                 </tr>
                             )

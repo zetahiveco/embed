@@ -17,6 +17,22 @@ export async function getDashboards(organizationId: string) {
     return dashboards;
 }
 
+export async function getDashboardById(dashboardId: string, organizationId: string) {
+    const prisma = Database.getInstance();
+    let dashboard = await prisma.dashboard.findFirstOrThrow({
+        where: {
+            id: dashboardId,
+            organizationId: organizationId
+        },
+    });
+
+    if (!dashboard.layout) {
+        dashboard.layout = [];
+    }
+
+    return dashboard;
+}
+
 export async function createDashboard(name: string, organizationId: string) {
     const prisma = Database.getInstance();
     return await prisma.dashboard.create({

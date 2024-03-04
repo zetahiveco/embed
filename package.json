@@ -3,7 +3,8 @@
   "description": "The open-source customer-facing embedded analytics and reports",
   "scripts": {
     "dev:ui": "pnpm --filter @embed/ui run dev",
-    "dev:api": "pnpm --filter @embed/api run dev"
+    "dev:api": "pnpm --filter @embed/api run dev",
+    "build:react": "pnpm --filter @embed/react build"
   },
   "keywords": [
     "visualization",

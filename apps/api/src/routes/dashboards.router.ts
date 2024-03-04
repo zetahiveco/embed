@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { verifyUserAuth } from "../middlewares/auth.middleware";
+import { publicRenderAuth, verifyUserAuth } from "../middlewares/auth.middleware";
 import { verifyMembership } from "../middlewares/organization.middleware";
 import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
-import { createDashboard, deleteDashbaord, getDashboards, updateDashboard } from "../services/dashboards.service";
+import { createDashboard, deleteDashbaord, getDashboardById, getDashboards, updateDashboard } from "../services/dashboards.service";
 import { APPLICATION_ERROR } from "../utils/errors";
 import { generateRenderToken, getTestVariables } from "../services/secrets.service";
 
@@ -93,6 +93,22 @@ router.delete(
         try {
             await deleteDashbaord(req.params.id, res.locals.organization);
             res.status(201).json({ detail: "ok" });
+            return;
+        } catch (err) {
+            res.status(500).json(APPLICATION_ERROR);
+            return;
+        }
+    }
+)
+
+
+router.get(
+    "/:id/public",
+    publicRenderAuth,
+    async (req, res) => {
+        try {
+            const result = await getDashboardById(req.params.id, res.locals.resource);
+            res.status(200).json(result);
             return;
         } catch (err) {
             res.status(500).json(APPLICATION_ERROR);
