@@ -105,7 +105,8 @@ export function Dashboard(props: DashboardProps) {
                             key={`rw-${rindex}`}
                             className={css`
                                 display: flex;
-                                width: 100%;
+                                width: calc(100% - 2em);
+                                margin: 1em;
                                 flex-direction: column;
                             `}
                         >
@@ -115,6 +116,7 @@ export function Dashboard(props: DashboardProps) {
                                     display: flex;
                                     height: ${row.height};
                                     width: 100%;
+                                    gap: 1em;
                                     flex-direction: row;
                                 `}
                             >

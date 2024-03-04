@@ -223,7 +223,7 @@ export default function Dashboards() {
                                                 return (
                                                     <Flex key={`rw-${rindex}-cl-${cindex}`} width={`calc(${column.width} + 40px)`}>
                                                         <Box width="calc(100% - 40px)" shadow="sm" padding="1em" border="1px solid #EBEBEB" >
-                                                            <Flex justifyContent="space-between" alignItems="center" height="2em">
+                                                            <Flex justifyContent="space-between" alignItems="center" height="3em">
                                                                 <Text fontSize="17px" fontWeight={600}>{column.title}</Text>
                                                                 <Flex>
                                                                     <IconButton
@@ -234,7 +234,7 @@ export default function Dashboards() {
                                                                     />
                                                                 </Flex>
                                                             </Flex>
-                                                            <Box height="calc(100% - 2em)">
+                                                            <Box height="calc(100% - 4em)">
                                                                 <Visualization
                                                                     id={column.visualizationId}
                                                                     server="http://localhost:8080"
