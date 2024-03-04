@@ -88,17 +88,19 @@ router.get(
     verifyMembership,
     async (req, res) => {
         try {
-            const result = await getVisualizationData(req.params.id, res.locals.organization);
             const testVariables = await getTestVariables(res.locals.organization);
+            const cleanTestVariables = testVariables.map((v) => ({
+                name: v.name,
+                type: v.type,
+                value: v.value
+            }))
             const renderToken = await generateRenderToken(
                 "",
-                testVariables.map((v) => ({
-                    name: v.name,
-                    type: v.type,
-                    value: v.value
-                })),
+                cleanTestVariables,
                 res.locals.organization
             );
+
+            const result = await getVisualizationData(req.params.id, res.locals.organization, cleanTestVariables);
             res.status(200).json({
                 result,
                 renderToken
@@ -143,7 +145,7 @@ router.get(
     publicRenderAuth,
     async (req, res) => {
         try {
-            const result = await getVisualizationData(req.params.id, res.locals.resource);
+            const result = await getVisualizationData(req.params.id, res.locals.resource, res.locals.variables);
             res.status(200).json(result);
             return;
         } catch (err) {

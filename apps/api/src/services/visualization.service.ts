@@ -1,6 +1,7 @@
 import { ChartType } from "@prisma/client";
 import Database from "../storage/db";
 import databaseExecutor from "./database.service";
+import format from "string-template";
 
 export async function fetchVisualizations(organizationId: string) {
     const prisma = Database.getInstance();
@@ -52,7 +53,7 @@ export async function updateVisualization(id: string, name: string, datasource: 
     return;
 }
 
-export async function getVisualizationData(id: string, organizationId: string) {
+export async function getVisualizationData(id: string, organizationId: string, variables: Array<{ name: string, type: string, value: string }>) {
 
     const prisma = Database.getInstance();
 
@@ -67,6 +68,14 @@ export async function getVisualizationData(id: string, organizationId: string) {
         }
     });
 
+    let plainSql = format(visualization.plainSql, variables.map(v => {
+        let obj: any = {};
+        if (v.type === "string") {
+            return obj[v.name] = `'${v.value}'`
+        }
+        return obj[v.name] = `${v.value}`
+    }))
+
     const resultData = await databaseExecutor(
         visualization.datasource.integrationType,
         visualization.datasource.database,
@@ -74,7 +83,7 @@ export async function getVisualizationData(id: string, organizationId: string) {
         visualization.datasource.port,
         visualization.datasource.username,
         visualization.datasource.password,
-        visualization.plainSql
+        plainSql
     )
 
     return {
