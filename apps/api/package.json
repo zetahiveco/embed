@@ -20,6 +20,7 @@
     "mysql2": "^3.9.1",
     "nodemailer": "^6.9.9",
     "pg": "^8.11.3",
+    "string-template": "^1.0.0",
     "uuid": "^9.0.1",
     "zod": "^3.22.4",
     "zod-express-middleware": "^1.4.0"
@@ -31,6 +32,7 @@
     "@types/jsonwebtoken": "^9.0.5",
     "@types/nodemailer": "^6.4.14",
     "@types/pg": "^8.11.0",
+    "@types/string-template": "^1.0.6",
     "@types/uuid": "^9.0.8",
     "nodemon": "^3.0.3",
     "prisma": "^5.9.1",
