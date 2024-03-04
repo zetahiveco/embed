@@ -14,13 +14,11 @@ export interface CreateKeyForm {
 export interface ITestVariable {
     id: string
     name: string
-    type: string
     value: string
 }
 
 export interface TestVariableForm {
     name: string
-    type: string
     value: string
 }
 

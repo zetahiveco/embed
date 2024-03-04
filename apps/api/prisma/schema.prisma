@@ -135,7 +135,6 @@ model ApiKey {
 model TestVariable {
   id             String       @id @default(uuid())
   name           String
-  type           String
   value          String
   organizationId String       @map("organization_id")
   organization   Organization @relation(references: [id], fields: [organizationId])

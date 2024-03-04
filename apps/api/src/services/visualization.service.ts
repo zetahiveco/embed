@@ -53,7 +53,7 @@ export async function updateVisualization(id: string, name: string, datasource: 
     return;
 }
 
-export async function getVisualizationData(id: string, organizationId: string, variables: Array<{ name: string, type: string, value: string }>) {
+export async function getVisualizationData(id: string, organizationId: string, variables: Array<{ name: string, value: string }>) {
 
     const prisma = Database.getInstance();
 
@@ -68,13 +68,13 @@ export async function getVisualizationData(id: string, organizationId: string, v
         }
     });
 
-    let plainSql = format(visualization.plainSql, variables.map(v => {
-        let obj: any = {};
-        if (v.type === "string") {
-            return obj[v.name] = `'${v.value}'`
-        }
-        return obj[v.name] = `${v.value}`
-    }))
+    let formatVariables: any = {};
+
+    variables.forEach(v => {
+        formatVariables[v.name] = v.value
+    })
+
+    let plainSql = format(visualization.plainSql, formatVariables);
 
     const resultData = await databaseExecutor(
         visualization.datasource.integrationType,
@@ -85,6 +85,7 @@ export async function getVisualizationData(id: string, organizationId: string, v
         visualization.datasource.password,
         plainSql
     )
+
 
     return {
         resultData,

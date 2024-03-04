@@ -1,4 +1,4 @@
-import { Box, Button, Container, Flex, FormControl, FormErrorMessage, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Select, Text } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, FormControl, FormErrorMessage, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from "@chakra-ui/react";
 import { CreateKeyForm, TestVariableForm, useSecrets } from "../../../data/secrets";
 import { HiTrash, HiClipboardCopy, HiPlus } from "react-icons/hi";
 import { useForm } from "react-hook-form";
@@ -71,16 +71,6 @@ function NewTestVariableForm(props: any) {
                         <Input placeholder="Enter a name" {...register("name", { required: true })} />
                         <FormErrorMessage>This field is required</FormErrorMessage>
                     </FormControl>
-                    <FormControl isInvalid={errors.type ? true : false}>
-                        <FormLabel>Type</FormLabel>
-                        <Select {...register("type", { required: true })}>
-                            <option value="">Choose Type</option>
-                            <option value="string">String</option>
-                            <option value="int">Int</option>
-                            <option value="boolean">Boolean</option>
-                        </Select>
-                        <FormErrorMessage>This field is required</FormErrorMessage>
-                    </FormControl>
                     <FormControl isInvalid={errors.value ? true : false}>
                         <FormLabel>Value</FormLabel>
                         <Input placeholder="Enter a value" {...register("value", { required: true })} />
@@ -150,7 +140,6 @@ export function Secrets() {
                     return (
                         <Flex key={`set-${index}`} alignItems="center" gap={3} paddingY="1em" paddingX="1em" border="1px solid #EBEBEB" rounded="md">
                             <Text fontWeight={500}>{variable.name}</Text>
-                            <Text fontWeight={500}>{variable.type}</Text>
                             <Input width="100%" isDisabled value={variable.value} />
                             <Button onClick={() => deleteTestVariable(variable.id)} width="150px" colorScheme="red" variant="outline" leftIcon={<HiTrash />}>Delete</Button>
                         </Flex>

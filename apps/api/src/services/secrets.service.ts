@@ -49,7 +49,7 @@ export async function getTestVariables(organizationId: string) {
 }
 
 
-export async function createTestVariable(name: string, type: string, value: string, organizationId: string) {
+export async function createTestVariable(name: string, value: string, organizationId: string) {
     const prisma = Database.getInstance();
 
     const exists = await prisma.testVariable.findFirst({
@@ -63,14 +63,9 @@ export async function createTestVariable(name: string, type: string, value: stri
         throw new Error("variable exists");
     }
 
-    if (type !== "int" && type !== "string" && type === "boolean") {
-        throw new Error("invalid type");
-    }
-
     await prisma.testVariable.create({
         data: {
             name: name,
-            type: type,
             value: value,
             organizationId: organizationId
         }
@@ -93,7 +88,7 @@ export async function deleteTestVariable(id: string, organizationId: string) {
 }
 
 
-export async function generateRenderToken(key: string, variables: Array<{ name: string, type: string, value: string }> = [], organizationId: string = "") {
+export async function generateRenderToken(key: string, variables: Array<{ name: string, value: string }> = [], organizationId: string = "") {
 
     if (!organizationId) {
         const prisma = Database.getInstance();

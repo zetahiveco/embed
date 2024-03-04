@@ -85,7 +85,6 @@ router.post(
     validateRequest({
         body: z.object({
             name: z.string(),
-            type: z.string(),
             value: z.string()
         })
     }),
@@ -93,7 +92,6 @@ router.post(
         try {
             await createTestVariable(
                 req.body.name,
-                req.body.type,
                 req.body.value,
                 res.locals.organization
             );
@@ -131,7 +129,6 @@ router.post(
             variables: z.array(
                 z.object({
                     name: z.string(),
-                    type: z.string(),
                     value: z.string()
                 })
             )
