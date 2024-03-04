@@ -20,7 +20,6 @@ router.get(
                 "",
                 testVariables.map((v) => ({
                     name: v.name,
-                    type: v.type,
                     value: v.value
                 })),
                 res.locals.organization

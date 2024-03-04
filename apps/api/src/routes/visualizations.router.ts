@@ -91,7 +91,6 @@ router.get(
             const testVariables = await getTestVariables(res.locals.organization);
             const cleanTestVariables = testVariables.map((v) => ({
                 name: v.name,
-                type: v.type,
                 value: v.value
             }))
             const renderToken = await generateRenderToken(
